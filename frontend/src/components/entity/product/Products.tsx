@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useQuery } from 'react-query';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../../../api/config';
 import { useTheme } from '../../../context/ThemeContext';
+import { useAuth } from '../../../context/AuthContext';
+import { useCart } from '../../../context/CartContext';
 
 interface Product {
   productId: number;
@@ -28,6 +31,9 @@ export default function Products() {
   const [showModal, setShowModal] = useState(false);
   const { data: products, isLoading, error } = useQuery('products', fetchProducts);
   const { darkMode } = useTheme();
+  const { isLoggedIn } = useAuth();
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
 
   const filteredProducts = products?.filter(product => 
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -43,13 +49,30 @@ export default function Products() {
 
   const handleAddToCart = (productId: number) => {
     const quantity = quantities[productId] || 0;
+    
+    if (!isLoggedIn) {
+      // Redirect to login page if not logged in
+      navigate('/login?error=Please login to add items to your cart');
+      return;
+    }
+
     if (quantity > 0) {
-      // TODO: Implement cart functionality
-      alert(`Added ${quantity} items to cart`);
-      setQuantities(prev => ({
-        ...prev,
-        [productId]: 0
-      }));
+      const product = products?.find(p => p.productId === productId);
+      if (product) {
+        addToCart({
+          productId: product.productId,
+          name: product.name,
+          price: product.price,
+          imgName: product.imgName,
+          discount: product.discount
+        }, quantity);
+        
+        // Reset quantity after adding to cart
+        setQuantities(prev => ({
+          ...prev,
+          [productId]: 0
+        }));
+      }
     }
   };
 

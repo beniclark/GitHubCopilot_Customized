@@ -1,8 +1,9 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 interface AuthContextType {
   isLoggedIn: boolean;
   isAdmin: boolean;
+  userEmail: string | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
@@ -10,8 +11,46 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => {
+    try {
+      return localStorage.getItem('isLoggedIn') === 'true';
+    } catch {
+      return false;
+    }
+  });
+  const [isAdmin, setIsAdmin] = useState(() => {
+    try {
+      return localStorage.getItem('isAdmin') === 'true';
+    } catch {
+      return false;
+    }
+  });
+  const [userEmail, setUserEmail] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem('userEmail');
+    } catch {
+      return null;
+    }
+  });
+
+  // Persist auth state to localStorage
+  useEffect(() => {
+    try {
+      if (isLoggedIn) {
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('isAdmin', isAdmin.toString());
+        if (userEmail) {
+          localStorage.setItem('userEmail', userEmail);
+        }
+      } else {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('isAdmin');
+        localStorage.removeItem('userEmail');
+      }
+    } catch (error) {
+      console.error('Failed to persist auth state:', error);
+    }
+  }, [isLoggedIn, isAdmin, userEmail]);
 
   const login = async (email: string, password: string) => {
     // In a real app, you would validate credentials with an API
@@ -19,16 +58,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (email && password) {
       setIsLoggedIn(true);
       setIsAdmin(email.endsWith('@github.com'));
+      setUserEmail(email);
     }
   };
 
   const logout = () => {
     setIsLoggedIn(false);
     setIsAdmin(false);
+    setUserEmail(null);
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, isAdmin, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, isAdmin, userEmail, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

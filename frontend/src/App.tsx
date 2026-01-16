@@ -4,8 +4,10 @@ import Welcome from './components/Welcome';
 import About from './components/About';
 import Footer from './components/Footer';
 import Products from './components/entity/product/Products';
+import Cart from './components/Cart';
 import Login from './components/Login';
 import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
 import { ThemeProvider } from './context/ThemeContext';
 import AdminProducts from './components/admin/AdminProducts';
 import { useTheme } from './context/ThemeContext';
@@ -23,6 +25,7 @@ function ThemedApp() {
             <Route path="/" element={<Welcome />} />
             <Route path="/about" element={<About />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/cart" element={<Cart />} />
             <Route path="/login" element={<Login />} />
             <Route path="/admin/products" element={<AdminProducts />} />
           </Routes>
@@ -36,9 +39,11 @@ function ThemedApp() {
 function App() {
   return (
     <AuthProvider>
-      <ThemeProvider>
-        <ThemedApp />
-      </ThemeProvider>
+      <CartProvider>
+        <ThemeProvider>
+          <ThemedApp />
+        </ThemeProvider>
+      </CartProvider>
     </AuthProvider>
   );
 }

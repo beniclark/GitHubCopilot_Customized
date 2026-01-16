@@ -12,27 +12,43 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
-    return localStorage.getItem('isLoggedIn') === 'true';
+    try {
+      return localStorage.getItem('isLoggedIn') === 'true';
+    } catch {
+      return false;
+    }
   });
   const [isAdmin, setIsAdmin] = useState(() => {
-    return localStorage.getItem('isAdmin') === 'true';
+    try {
+      return localStorage.getItem('isAdmin') === 'true';
+    } catch {
+      return false;
+    }
   });
   const [userEmail, setUserEmail] = useState<string | null>(() => {
-    return localStorage.getItem('userEmail');
+    try {
+      return localStorage.getItem('userEmail');
+    } catch {
+      return null;
+    }
   });
 
   // Persist auth state to localStorage
   useEffect(() => {
-    if (isLoggedIn) {
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('isAdmin', isAdmin.toString());
-      if (userEmail) {
-        localStorage.setItem('userEmail', userEmail);
+    try {
+      if (isLoggedIn) {
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('isAdmin', isAdmin.toString());
+        if (userEmail) {
+          localStorage.setItem('userEmail', userEmail);
+        }
+      } else {
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('isAdmin');
+        localStorage.removeItem('userEmail');
       }
-    } else {
-      localStorage.removeItem('isLoggedIn');
-      localStorage.removeItem('isAdmin');
-      localStorage.removeItem('userEmail');
+    } catch (error) {
+      console.error('Failed to persist auth state:', error);
     }
   }, [isLoggedIn, isAdmin, userEmail]);
 

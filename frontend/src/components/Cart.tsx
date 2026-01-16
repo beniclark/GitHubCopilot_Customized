@@ -2,6 +2,7 @@ import { useCart } from '../context/CartContext';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 export default function Cart() {
   const { items, removeFromCart, updateQuantity, getTotalPrice, clearCart } = useCart();
@@ -10,12 +11,17 @@ export default function Cart() {
   const navigate = useNavigate();
 
   // Redirect to login if not authenticated
-  if (!isLoggedIn) {
-    navigate('/login?error=Please login to view your cart');
-    return null;
-  }
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate('/login?error=Please login to view your cart');
+    }
+  }, [isLoggedIn, navigate]);
 
   const totalPrice = getTotalPrice();
+
+  if (!isLoggedIn) {
+    return null;
+  }
 
   if (items.length === 0) {
     return (

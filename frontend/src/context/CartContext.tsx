@@ -26,13 +26,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const { isLoggedIn } = useAuth();
   const [items, setItems] = useState<CartItem[]>(() => {
     // Load cart from localStorage on initialization
-    const savedCart = localStorage.getItem('cart');
-    return savedCart ? JSON.parse(savedCart) : [];
+    try {
+      const savedCart = localStorage.getItem('cart');
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch (error) {
+      console.error('Failed to load cart from localStorage:', error);
+      return [];
+    }
   });
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(items));
+    try {
+      localStorage.setItem('cart', JSON.stringify(items));
+    } catch (error) {
+      console.error('Failed to save cart to localStorage:', error);
+    }
   }, [items]);
 
   // Clear cart when user logs out

@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 
 export default function Cart() {
-  const { items, removeFromCart, updateQuantity, getTotalPrice, clearCart } = useCart();
+  const { items, removeFromCart, updateQuantity, getTotalPrice, getTotalItems, clearCart } = useCart();
   const { darkMode } = useTheme();
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
@@ -18,6 +18,7 @@ export default function Cart() {
   }, [isLoggedIn, navigate]);
 
   const totalPrice = getTotalPrice();
+  const totalItems = getTotalItems();
 
   if (!isLoggedIn) {
     return null;
@@ -172,7 +173,7 @@ export default function Cart() {
               
               <div className="space-y-3 mb-6">
                 <div className={`flex justify-between ${darkMode ? 'text-gray-300' : 'text-gray-600'} transition-colors duration-300`}>
-                  <span>Items ({items.length})</span>
+                  <span>Items ({totalItems})</span>
                   <span>${totalPrice.toFixed(2)}</span>
                 </div>
                 <div className={`flex justify-between ${darkMode ? 'text-gray-300' : 'text-gray-600'} transition-colors duration-300`}>

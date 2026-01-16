@@ -48,7 +48,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!isLoggedIn) {
       setItems([]);
-      localStorage.removeItem('cart');
+      try {
+        localStorage.removeItem('cart');
+      } catch (error) {
+        console.error('Failed to remove cart from localStorage:', error);
+      }
     }
   }, [isLoggedIn]);
 
@@ -91,7 +95,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = () => {
     setItems([]);
-    localStorage.removeItem('cart');
+    try {
+      localStorage.removeItem('cart');
+    } catch (error) {
+      console.error('Failed to remove cart from localStorage:', error);
+    }
   };
 
   const getTotalItems = () => {

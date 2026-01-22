@@ -37,8 +37,10 @@ export default function Login() {
         {error && (
           <div 
             className="bg-red-500/10 border border-red-500 text-red-500 rounded-md p-3 mb-4"
-            dangerouslySetInnerHTML={{ __html: error }}
-          />
+            role="alert"
+          >
+            {error}
+          </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">

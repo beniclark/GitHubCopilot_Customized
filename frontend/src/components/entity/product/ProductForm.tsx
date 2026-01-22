@@ -29,6 +29,7 @@ interface ProductFormProps {
 
 export default function ProductForm({ product, suppliers, onClose, onSave }: ProductFormProps) {
   const { darkMode } = useTheme();
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState<Partial<Product>>(
     product || {
       name: '',
@@ -43,6 +44,7 @@ export default function ProductForm({ product, suppliers, onClose, onSave }: Pro
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     try {
       if (product) {
         await axios.put(`${api.baseURL}${api.endpoints.products}/${product.productId}`, formData);
@@ -51,8 +53,8 @@ export default function ProductForm({ product, suppliers, onClose, onSave }: Pro
       }
       onSave();
       onClose();
-    } catch (error) {
-      console.error('Error saving product:', error);
+    } catch {
+      setError(`Failed to ${product ? 'update' : 'create'} product. Please try again.`);
     }
   };
 
@@ -62,6 +64,13 @@ export default function ProductForm({ product, suppliers, onClose, onSave }: Pro
         <h2 className={`text-2xl font-bold ${darkMode ? 'text-light' : 'text-gray-800'} mb-4 transition-colors duration-300`}>
           {product ? 'Edit Product' : 'Add New Product'}
         </h2>
+        
+        {error && (
+          <div className={`mb-4 ${darkMode ? 'bg-red-900/20' : 'bg-red-100'} border border-red-500 text-red-500 rounded-lg p-3`} role="alert">
+            {error}
+          </div>
+        )}
+        
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>Name</label>

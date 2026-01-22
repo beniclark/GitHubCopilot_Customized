@@ -70,11 +70,9 @@ export default function ProductForm({ product, suppliers, onClose, onSave }: Pro
       errors.imgName = 'Image name is required';
     }
     
-    if (formData.discount !== undefined) {
-      const discountPercent = formData.discount * 100;
-      if (discountPercent < 0 || discountPercent > 100) {
-        errors.discount = 'Discount must be between 0 and 100%';
-      }
+    // Discount is stored as decimal (0.0-1.0) but is validated as percentage
+    if (formData.discount !== undefined && (formData.discount < 0 || formData.discount > 1)) {
+      errors.discount = 'Discount must be between 0 and 100%';
     }
     
     setValidationErrors(errors);

@@ -70,7 +70,7 @@ export default function ProductForm({ product, suppliers, onClose, onSave }: Pro
       errors.imgName = 'Image name is required';
     }
     
-    // Discount is stored as decimal (0.0-1.0) but is validated as percentage
+    // Discount is stored as decimal (0.0-1.0) for the API
     if (formData.discount !== undefined && (formData.discount < 0 || formData.discount > 1)) {
       errors.discount = 'Discount must be between 0 and 100%';
     }

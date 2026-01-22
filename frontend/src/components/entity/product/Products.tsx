@@ -65,17 +65,17 @@ export default function Products() {
 
   // Handle keyboard events for modal
   useEffect(() => {
+    if (!showModal) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && showModal) {
+      if (e.key === 'Escape') {
         closeModal();
       }
     };
 
-    if (showModal) {
-      document.addEventListener('keydown', handleKeyDown);
-      // Prevent body scroll when modal is open
-      document.body.style.overflow = 'hidden';
-    }
+    document.addEventListener('keydown', handleKeyDown);
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden';
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);

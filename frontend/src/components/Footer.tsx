@@ -20,11 +20,11 @@ const Footer: React.FC = () => {
           <div>
             <h2 className="font-bold text-xl mb-4 text-primary">Account</h2>
             <ul className="space-y-2">
-              <li><a href="#" className="hover:text-primary">My Cart</a></li>
-              <li><a href="#" className="hover:text-primary">Checkout</a></li>
-              <li><a href="#" className="hover:text-primary">Shopping Details</a></li>
-              <li><a href="#" className="hover:text-primary">Order</a></li>
-              <li><a href="#" className="hover:text-primary">Help Center</a></li>
+              <li><button type="button" className="hover:text-primary text-left">My Cart</button></li>
+              <li><button type="button" className="hover:text-primary text-left">Checkout</button></li>
+              <li><button type="button" className="hover:text-primary text-left">Shopping Details</button></li>
+              <li><button type="button" className="hover:text-primary text-left">Order</button></li>
+              <li><button type="button" className="hover:text-primary text-left">Help Center</button></li>
             </ul>
           </div>
 
@@ -32,11 +32,11 @@ const Footer: React.FC = () => {
           <div>
             <h2 className="font-bold text-xl mb-4 text-primary">Helpful Links</h2>
             <ul className="space-y-2">
-              <li><a href="#" className="hover:text-primary">Services</a></li>
-              <li><a href="#" className="hover:text-primary">Supports</a></li>
-              <li><a href="#" className="hover:text-primary">Feedback</a></li>
-              <li><a href="#" className="hover:text-primary">Terms & Conditions</a></li>
-              <li><a href="#" className="hover:text-primary">Privacy Policy</a></li>
+              <li><button type="button" className="hover:text-primary text-left">Services</button></li>
+              <li><button type="button" className="hover:text-primary text-left">Supports</button></li>
+              <li><button type="button" className="hover:text-primary text-left">Feedback</button></li>
+              <li><button type="button" className="hover:text-primary text-left">Terms & Conditions</button></li>
+              <li><button type="button" className="hover:text-primary text-left">Privacy Policy</button></li>
             </ul>
           </div>
 
@@ -44,11 +44,11 @@ const Footer: React.FC = () => {
           <div>
             <h2 className="font-bold text-xl mb-4 text-primary">Social Media</h2>
             <ul className="space-y-2">
-              <li><a href="#" className="hover:text-primary">Twitter</a></li>
-              <li><a href="#" className="hover:text-primary">Facebook</a></li>
-              <li><a href="#" className="hover:text-primary">Youtube</a></li>
-              <li><a href="#" className="hover:text-primary">Linkedin</a></li>
-              <li><a href="#" className="hover:text-primary">Instagram</a></li>
+              <li><button type="button" className="hover:text-primary text-left">Twitter</button></li>
+              <li><button type="button" className="hover:text-primary text-left">Facebook</button></li>
+              <li><button type="button" className="hover:text-primary text-left">Youtube</button></li>
+              <li><button type="button" className="hover:text-primary text-left">Linkedin</button></li>
+              <li><button type="button" className="hover:text-primary text-left">Instagram</button></li>
             </ul>
           </div>
         </div>

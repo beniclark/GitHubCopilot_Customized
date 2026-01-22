@@ -40,10 +40,17 @@ export default function AdminProducts() {
   const [showForm, setShowForm] = useState(false);
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
+  const [error, setError] = useState<string>('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchProducts();
-    fetchSuppliers();
+    const loadData = async () => {
+      setLoading(true);
+      setError('');
+      await Promise.all([fetchProducts(), fetchSuppliers()]);
+      setLoading(false);
+    };
+    loadData();
   }, []);
 
   const fetchProducts = async () => {
@@ -57,16 +64,17 @@ export default function AdminProducts() {
           try {
             const supplierResponse = await axios.get(`${api.baseURL}${api.endpoints.suppliers}/${product.supplierId}`);
             return { ...product, supplier: supplierResponse.data };
-          } catch (error) {
-            console.error(`Error fetching supplier for product ${product.productId}:`, error);
+          } catch {
+            // Log error but don't fail the entire operation
             return product;
           }
         })
       );
       
       setProducts(productsWithSuppliers);
-    } catch (error) {
-      console.error('Error fetching products:', error);
+      setError('');
+    } catch {
+      setError('Failed to load products. Please try again.');
     }
   };
 
@@ -74,8 +82,9 @@ export default function AdminProducts() {
     try {
       const response = await axios.get(`${api.baseURL}${api.endpoints.suppliers}`);
       setSuppliers(response.data);
-    } catch (error) {
-      console.error('Error fetching suppliers:', error);
+      setError('');
+    } catch {
+      setError('Failed to load suppliers. Please try again.');
     }
   };
 
@@ -110,7 +119,29 @@ export default function AdminProducts() {
 
   return (
     <div className={`container mx-auto px-4 pt-20 pb-8 ${darkMode ? 'bg-dark' : 'bg-gray-100'} min-h-screen transition-colors duration-300`}>
-      <div className="flex justify-between items-center mb-6">
+      {error && (
+        <div className={`mb-4 ${darkMode ? 'bg-red-900/20' : 'bg-red-100'} border border-red-500 text-red-500 rounded-lg p-4`} role="alert">
+          {error}
+          <button 
+            onClick={() => {
+              setError('');
+              fetchProducts();
+              fetchSuppliers();
+            }}
+            className="ml-4 underline hover:no-underline"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+      
+      {loading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-primary"></div>
+        </div>
+      ) : (
+        <>
+          <div className="flex justify-between items-center mb-6">
         <h1 className={`text-2xl font-bold ${darkMode ? 'text-light' : 'text-gray-800'} transition-colors duration-300`}>Product Management</h1>
         <button
           onClick={() => {
@@ -200,8 +231,9 @@ export default function AdminProducts() {
                         try {
                           await axios.delete(`${api.baseURL}${api.endpoints.products}/${product.productId}`);
                           await fetchProducts();
-                        } catch (error) {
-                          console.error('Error deleting product:', error);
+                          setError('');
+                        } catch {
+                          setError('Failed to delete product. Please try again.');
                         }
                       }
                     }}
@@ -223,6 +255,8 @@ export default function AdminProducts() {
           onClose={() => setShowForm(false)}
           onSave={fetchProducts}
         />
+      )}
+        </>
       )}
     </div>
   );

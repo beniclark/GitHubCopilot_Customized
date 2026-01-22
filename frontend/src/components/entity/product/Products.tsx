@@ -26,7 +26,7 @@ export default function Products() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const { data: products, isLoading, error } = useQuery('products', fetchProducts);
+  const { data: products, isLoading, error, refetch } = useQuery('products', fetchProducts);
   const { darkMode } = useTheme();
 
   const filteredProducts = products?.filter(product => 
@@ -103,7 +103,7 @@ export default function Products() {
             <h2 className="text-xl font-bold mb-2">Failed to Load Products</h2>
             <p className="mb-4">We're having trouble loading products. Please try again later.</p>
             <button 
-              onClick={() => window.location.reload()} 
+              onClick={() => refetch()} 
               className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded transition-colors"
             >
               Retry

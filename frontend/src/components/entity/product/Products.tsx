@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useQuery } from 'react-query';
 import { api } from '../../../api/config';
@@ -34,14 +34,14 @@ export default function Products() {
     product.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleQuantityChange = (productId: number, change: number) => {
+  const handleQuantityChange = useCallback((productId: number, change: number) => {
     setQuantities(prev => ({
       ...prev,
       [productId]: Math.max(0, (prev[productId] || 0) + change)
     }));
-  };
+  }, []);
 
-  const handleAddToCart = (productId: number) => {
+  const handleAddToCart = useCallback((productId: number) => {
     const quantity = quantities[productId] || 0;
     if (quantity > 0) {
       // TODO: Implement cart functionality
@@ -51,17 +51,17 @@ export default function Products() {
         [productId]: 0
       }));
     }
-  };
+  }, [quantities]);
 
-  const handleProductClick = (product: Product) => {
+  const handleProductClick = useCallback((product: Product) => {
     setSelectedProduct(product);
     setShowModal(true);
-  };
+  }, []);
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setShowModal(false);
     setSelectedProduct(null);
-  };
+  }, []);
 
   // Handle keyboard events for modal
   useEffect(() => {
@@ -81,7 +81,7 @@ export default function Products() {
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
     };
-  }, [showModal]);
+  }, [showModal, closeModal]);
 
   if (isLoading) {
     return (

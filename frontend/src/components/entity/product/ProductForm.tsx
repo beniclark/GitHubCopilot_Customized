@@ -30,6 +30,7 @@ interface ProductFormProps {
 export default function ProductForm({ product, suppliers, onClose, onSave }: ProductFormProps) {
   const { darkMode } = useTheme();
   const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState<Partial<Product>>(
     product || {
       name: '',
@@ -42,9 +43,49 @@ export default function ProductForm({ product, suppliers, onClose, onSave }: Pro
     }
   );
 
+  const validateForm = (): boolean => {
+    const errors: Record<string, string> = {};
+    
+    if (!formData.name || formData.name.trim().length === 0) {
+      errors.name = 'Product name is required';
+    }
+    
+    if (!formData.description || formData.description.trim().length === 0) {
+      errors.description = 'Description is required';
+    }
+    
+    if (!formData.price || formData.price <= 0) {
+      errors.price = 'Price must be greater than 0';
+    }
+    
+    if (!formData.sku || formData.sku.trim().length === 0) {
+      errors.sku = 'SKU is required';
+    }
+    
+    if (!formData.unit || formData.unit.trim().length === 0) {
+      errors.unit = 'Unit is required';
+    }
+    
+    if (!formData.imgName || formData.imgName.trim().length === 0) {
+      errors.imgName = 'Image name is required';
+    }
+    
+    if (formData.discount !== undefined && (formData.discount < 0 || formData.discount > 1)) {
+      errors.discount = 'Discount must be between 0 and 100%';
+    }
+    
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    
+    if (!validateForm()) {
+      return;
+    }
+    
     try {
       if (product) {
         await axios.put(`${api.baseURL}${api.endpoints.products}/${product.productId}`, formData);
@@ -78,18 +119,20 @@ export default function ProductForm({ product, suppliers, onClose, onSave }: Pro
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300`}
+              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300 ${validationErrors.name ? 'border border-red-500' : ''}`}
               required
             />
+            {validationErrors.name && <p className="text-red-500 text-sm mt-1">{validationErrors.name}</p>}
           </div>
           <div>
             <label className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>Description</label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300`}
+              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300 ${validationErrors.description ? 'border border-red-500' : ''}`}
               required
             />
+            {validationErrors.description && <p className="text-red-500 text-sm mt-1">{validationErrors.description}</p>}
           </div>
           <div>
             <label className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>Price</label>
@@ -97,11 +140,12 @@ export default function ProductForm({ product, suppliers, onClose, onSave }: Pro
               type="number"
               value={formData.price}
               onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) })}
-              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300`}
+              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300 ${validationErrors.price ? 'border border-red-500' : ''}`}
               required
               min="0"
               step="0.01"
             />
+            {validationErrors.price && <p className="text-red-500 text-sm mt-1">{validationErrors.price}</p>}
           </div>
           <div>
             <label className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>SKU</label>
@@ -109,9 +153,10 @@ export default function ProductForm({ product, suppliers, onClose, onSave }: Pro
               type="text"
               value={formData.sku}
               onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
-              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300`}
+              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300 ${validationErrors.sku ? 'border border-red-500' : ''}`}
               required
             />
+            {validationErrors.sku && <p className="text-red-500 text-sm mt-1">{validationErrors.sku}</p>}
           </div>
           <div>
             <label className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>Unit</label>
@@ -119,9 +164,10 @@ export default function ProductForm({ product, suppliers, onClose, onSave }: Pro
               type="text"
               value={formData.unit}
               onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300`}
+              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300 ${validationErrors.unit ? 'border border-red-500' : ''}`}
               required
             />
+            {validationErrors.unit && <p className="text-red-500 text-sm mt-1">{validationErrors.unit}</p>}
           </div>
           <div>
             <label className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>Image Name</label>
@@ -129,9 +175,10 @@ export default function ProductForm({ product, suppliers, onClose, onSave }: Pro
               type="text"
               value={formData.imgName}
               onChange={(e) => setFormData({ ...formData, imgName: e.target.value })}
-              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300`}
+              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300 ${validationErrors.imgName ? 'border border-red-500' : ''}`}
               required
             />
+            {validationErrors.imgName && <p className="text-red-500 text-sm mt-1">{validationErrors.imgName}</p>}
           </div>
           <div>
             <label className={`block ${darkMode ? 'text-light' : 'text-gray-700'} mb-1 transition-colors duration-300`}>Supplier</label>
@@ -158,11 +205,12 @@ export default function ProductForm({ product, suppliers, onClose, onSave }: Pro
                 setFormData({ ...formData, discount: value });
               }}
               placeholder="Enter discount percentage (e.g. 25 for 25%)"
-              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300`}
+              className={`w-full px-3 py-2 ${darkMode ? 'bg-gray-700 text-light' : 'bg-gray-100 text-gray-800'} rounded transition-colors duration-300 ${validationErrors.discount ? 'border border-red-500' : ''}`}
               min="0"
               max="100"
               step="1"
             />
+            {validationErrors.discount && <p className="text-red-500 text-sm mt-1">{validationErrors.discount}</p>}
             <p className={`text-xs mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>Leave empty for no discount</p>
           </div>
           <div className="flex justify-end space-x-2">

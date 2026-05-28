@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: zavastorefrontdev
+metadata:
+  template: ZavaStorefront@0.0.1
+
+infra:
+  provider: bicep
+  path: infra
+
+services:
+  web:
+    # Points to the api/ directory which contains the Dockerfile
+    project: ./api
+    host: appservice
+    language: docker
+    docker:
+      # Build the image using ACR Tasks — no local Docker installation required
+      remoteBuild: true
